@@ -5,6 +5,10 @@ InfiniteScroller.Game = function () { };
 InfiniteScroller.Game.prototype = {
   preload: function () {
     this.game.time.advancedTiming = true;
+    var lsd = false;
+    if (lsd) {
+      this.game.stage.backgroundColor = '#E18D8D';
+    }
   },
   create: function () {
 
@@ -134,10 +138,11 @@ InfiniteScroller.Game.prototype = {
       //take the appropriate action for swiping up or pressing up arrow on keyboard
       //we don't wait until the swipe is finished (this.swipe.isUp),
       //  because of latency problems (it takes too long to jump before hitting a flea)
-      if (this.swipe.isDown && (this.swipe.positionDown.y > this.swipe.position.y)) {
-        this.playerJump();
-      }
-      else if (this.cursors.up.isDown) {
+      // if (this.swipe.isDown && (this.swipe.positionDown.y > this.swipe.position.y)) {
+      //   this.playerJump();
+      // }
+      /*else*/ if (this.cursors.up.isDown) {
+
         this.playerJump();
       }
 
@@ -211,10 +216,33 @@ InfiniteScroller.Game.prototype = {
     }
   },
   playerJump: function () {
-    //when the ground is a sprite, we need to test for "touching" instead of "blocked"
-    if (this.player.body.touching.down) {
-      this.player.body.velocity.y -= 500;
+    var onTheGround = this.player.body.touching.down;
+
+    if (onTheGround) {
+      this.jumps = 2;
+      this.jumping = false;
     }
+
+    if (this.jumps > 0) {
+      this.player.body.velocity.y -= 300;
+      this.jumping = true;
+    }
+
+    if (this.jumping) {
+      // this.player.body.velocity.y -= 300;
+      this.jumps--;
+      this.jumping = false;
+    }
+    // var saut = true
+    // //when the ground is a sprite, we need to test for "touching" instead of "blocked"
+    // if (this.player.body.touching.down && saut == true) {
+    //   this.player.body.velocity.y -= 500;
+    //   saut = false;
+    // }
+    // if (!this.player.body.touching.down && saut == false) {
+    //   this.player.body.velocity.y -= 500;
+    //   saut = true;
+    // }
   },
   playerDig: function () {
     //play audio
@@ -309,7 +337,7 @@ InfiniteScroller.Game.prototype = {
     this.fleas.enableBody = true;
 
     //phaser's random number generator
-    var numFleas = this.game.rnd.integerInRange(1, 6)
+    var numFleas = this.game.rnd.integerInRange(1, 3)
     var flea;
     var tab = ['flea', 'pills', 'boobs', 'seringue', 'wine']
 
@@ -330,5 +358,16 @@ InfiniteScroller.Game.prototype = {
   },
   render: function () {
     //this.game.debug.text(this.game.time.fps || '--', 20, 70, "#00ff00", "40px Courier");
+  },
+  upInputIsActive: function (duration) {
+    var isActive = false;
+
+    isActive = this.input.keyboard.downDuration(Phaser.Keyboard.UP, duration);
+    isActive |= (this.game.input.activePointer.justPressed(duration + 1000 / 60) &&
+      this.game.input.activePointer.x > this.game.width / 4 &&
+      this.game.input.activePointer.x < this.game.width / 2 + this.game.width / 4);
+
+    return isActive;
   }
+
 };

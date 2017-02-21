@@ -5,15 +5,16 @@ InfiniteScroller.Game = function () { };
 InfiniteScroller.Game.prototype = {
   preload: function () {
     this.game.time.advancedTiming = true;
-    var lsd = false;
+    var lsd = true;
     if (lsd) {
-      this.game.stage.backgroundColor = '#E18D8D';
+      this.game.add.sprite(0, 0, 'lsdback');
+      // this.game.stage.backgroundColor = '#E18D8D';
     }
   },
   create: function () {
 
     //set up background and ground layer
-    this.game.world.setBounds(0, 0, 3500, this.game.height);
+    this.game.world.setBounds(0, 0, 5760, this.game.height);
     this.ground = this.add.tileSprite(0, this.game.height - 70, this.game.world.width, 70, 'ground');
 
     //create player and walk animation

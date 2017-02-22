@@ -19,6 +19,7 @@ InfiniteScroller.Preload.prototype = {
     this.load.image('ground', 'assets/images/ground.png');
     this.load.image('background', 'assets/images/bckg2.png');
 
+
     // this.load.image('grass', 'assets/images/grass.png');
     this.load.audio('whine', ['assets/audio/whine.ogg', 'assets/audio/whine.mp3']);
     this.load.audio('bark', ['assets/audio/bark.ogg', 'assets/audio/bark.mp3']);

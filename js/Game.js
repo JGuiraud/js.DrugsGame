@@ -1,4 +1,5 @@
 var InfiniteScroller = InfiniteScroller || {};
+var ville;
 
 InfiniteScroller.Game = function () { };
 var lsd = false;
@@ -10,6 +11,9 @@ InfiniteScroller.Game.prototype = {
 
   },
   create: function () {
+    ville = InfiniteScroller.game.add.tileSprite(0, 0, 3495, 600, 'background');
+
+    var lsdimage = this.game.cache.getImage('lsdback');
 
 
     //set up background and ground layer
@@ -82,7 +86,7 @@ InfiniteScroller.Game.prototype = {
     //create an array of possible toys that can be gathered from toy mounds
     var heart = this.game.add.sprite(0, this.game.height - 130, 'heart');
     var kit = this.game.add.sprite(0, this.game.height - 130, 'kit');
-    var lsdpill = this.game.add.sprite(0, this.game.height - 130, 'lsdpill')
+    var lsdpill = this.game.add.image(0, this.game.height - 130, 'lsdpill')
     lsdpill.alpha = 0.2;
     heart.visible = false;
     kit.visible = false;
@@ -110,9 +114,11 @@ InfiniteScroller.Game.prototype = {
     this.game.physics.arcade.collide(this.player, this.ground, this.playerHit, null, this);
     this.game.physics.arcade.collide(this.player, this.fleas, this.playerBit, null, this);
     this.game.physics.arcade.overlap(this.player, this.mounds, this.collect, this.checkDig, this);
+    ville.tilePosition.x -= 0;
+
 
     if (lsd) {
-      this.game.add.sprite(0, 0, 'lsdback');
+      this.add.sprite(0, 0, "lsdback");
       // lsdpill.alpha = 0.2;
     }
 
@@ -250,6 +256,7 @@ InfiniteScroller.Game.prototype = {
       this.jumps--;
       this.jumping = false;
     }
+
     // var saut = true
     // //when the ground is a sprite, we need to test for "touching" instead of "blocked"
     // if (this.player.body.touching.down && saut == true) {
@@ -273,12 +280,16 @@ InfiniteScroller.Game.prototype = {
       this.currentLife++;
       console.log("vie collectée :" + this.heartpts)
     }
-    if (this.currentToy.key == "lsdpill") {
-      console.log("aighhhht")
-      lsd = true
-      // this.currentLife++;
-      // console.log("vie collectée :" + this.heartpts)
-    }
+
+
+
+    // if (this.currentToy.key == "lsdpill") {
+    //   console.log("aighhhht")
+    //   lsd = true
+    // }
+
+
+
     //make the toy visible where the mound used to be
     this.currentToy.visible = true;
     this.currentToy.x = x;

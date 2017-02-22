@@ -1,4 +1,5 @@
 var InfiniteScroller = InfiniteScroller || {};
+var ville;
 
 InfiniteScroller.Game = function () { };
 
@@ -7,6 +8,7 @@ InfiniteScroller.Game.prototype = {
     this.game.time.advancedTiming = true;
   },
   create: function () {
+    ville = InfiniteScroller.game.add.tileSprite(0, 0, 3495, 600, 'background');
 
     //set up background and ground layer
     this.game.world.setBounds(0, 0, 3500, this.game.height);
@@ -103,6 +105,7 @@ InfiniteScroller.Game.prototype = {
     this.game.physics.arcade.collide(this.player, this.ground, this.playerHit, null, this);
     this.game.physics.arcade.collide(this.player, this.fleas, this.playerBit, null, this);
     this.game.physics.arcade.overlap(this.player, this.mounds, this.collect, this.checkDig, this);
+    ville.tilePosition.x -= 0;
 
     //only respond to keys and keep the speed if the player is alive
     //we also don't want to do anything if the player is stopped for scratching or digging
@@ -229,6 +232,7 @@ InfiniteScroller.Game.prototype = {
       this.jumps--;
       this.jumping = false;
     }
+
     // var saut = true
     // //when the ground is a sprite, we need to test for "touching" instead of "blocked"
     // if (this.player.body.touching.down && saut == true) {

@@ -1,12 +1,16 @@
 var InfiniteScroller = InfiniteScroller || {};
 
 InfiniteScroller.Game = function () { };
+var lsd = false;
+
 
 InfiniteScroller.Game.prototype = {
   preload: function () {
     this.game.time.advancedTiming = true;
+
   },
   create: function () {
+
 
     //set up background and ground layer
     this.game.world.setBounds(0, 0, 3500, this.game.height);
@@ -67,35 +71,38 @@ InfiniteScroller.Game.prototype = {
     this.whineSound = this.game.add.audio('whine');
 
     //set some variables we need throughout the game
-    this.scratches = 0;
+    this.hit = 0;
     this.wraps = 0;
     this.points = 0;
+    this.heartpts;
     this.wrapping = true;
     this.stopped = false;
-    this.maxScratches = 5;
+    this.currentLife = 5
 
     //create an array of possible toys that can be gathered from toy mounds
-    var bone = this.game.add.sprite(0, this.game.height - 130, 'bone');
-    var ball = this.game.add.sprite(0, this.game.height - 130, 'ball');
-    bone.visible = false;
-    ball.visible = false;
-    this.toys = [bone, ball];
-    this.currentToy = bone;
+    var heart = this.game.add.sprite(0, this.game.height - 130, 'heart');
+    var kit = this.game.add.sprite(0, this.game.height - 130, 'kit');
+    var lsdpill = this.game.add.sprite(0, this.game.height - 130, 'lsdpill')
+    lsdpill.alpha = 0.2;
+    heart.visible = false;
+    kit.visible = false;
+    this.toys = [heart, kit, lsdpill];
 
     //stats
-    var style1 = { font: "20px Arial", fill: "#ff0" };
+    var style1 = { font: "20px Arial" };
     var t1 = this.game.add.text(10, 20, "Points:", style1);
     var t2 = this.game.add.text(this.game.width - 180, 20, "Vie restante:", style1);
     t1.fixedToCamera = true;
     t2.fixedToCamera = true;
 
-    var style2 = { font: "26px Arial", fill: "#00ff00" };
-    this.pointsText = this.game.add.text(80, 18, "", style2);
-    this.fleasText = this.game.add.text(this.game.width - 50, 18, "", style2);
-    this.refreshStats();
+    var style2 = { font: "26px Arial" };
+    this.pointsText = this.game.add.text(80, 18);
+    this.fleasText = this.game.add.text(this.game.width - 50, 18);
+
     this.pointsText.fixedToCamera = true;
     this.fleasText.fixedToCamera = true;
 
+    this.refreshStats();
   },
 
   update: function () {
@@ -103,6 +110,11 @@ InfiniteScroller.Game.prototype = {
     this.game.physics.arcade.collide(this.player, this.ground, this.playerHit, null, this);
     this.game.physics.arcade.collide(this.player, this.fleas, this.playerBit, null, this);
     this.game.physics.arcade.overlap(this.player, this.mounds, this.collect, this.checkDig, this);
+
+    if (lsd) {
+      this.game.add.sprite(0, 0, 'lsdback');
+      // lsdpill.alpha = 0.2;
+    }
 
     //only respond to keys and keep the speed if the player is alive
     //we also don't want to do anything if the player is stopped for scratching or digging
@@ -137,8 +149,8 @@ InfiniteScroller.Game.prototype = {
       // if (this.swipe.isDown && (this.swipe.positionDown.y > this.swipe.position.y)) {
       //   this.playerJump();
       // }
-      /*else*/ if (this.cursors.up.isDown) {
-
+      /*else*/
+      if (this.cursors.up.isDown) {
         this.playerJump();
       }
 
@@ -152,7 +164,16 @@ InfiniteScroller.Game.prototype = {
   //show updated stats values
   refreshStats: function () {
     this.pointsText.text = this.points;
-    this.fleasText.text = this.maxScratches - this.scratches;
+    this.fleasText.text = this.currentLife
+
+    if (this.heartpts == 1 && this.fleasText.text == this.currentLife) {
+      this.fleasText.text = this.fleasText.text - this.hit + this.heartpts;
+    }
+    if (this.heartpts < 1) {
+      this.fleasText.text = this.fleasText.text - this.hit;
+    }
+    this.heartpts = 0;
+    // this.heartpts = 0;
   },
   playerHit: function (player, blockedLayer) {
     if (player.body.touching.right) {
@@ -165,7 +186,7 @@ InfiniteScroller.Game.prototype = {
     flea.destroy();
 
     //update our stats
-    this.scratches++;
+    this.hit++;
     this.refreshStats();
 
     //change sprite image
@@ -241,26 +262,29 @@ InfiniteScroller.Game.prototype = {
     // }
   },
   playerDig: function () {
-    //play audio
-    this.barkSound.play();
-
     //grab the location before we destroy the toy mound so we can place the toy
     var x = this.currentMound.x;
-
     //remove toy the mound sprite now that the toy is collected
     this.currentMound.destroy();
-
-    //refresh our points stats
-    this.points += 5;
-    this.refreshStats();
-
     //randomly pull a toy from the array
     this.currentToy = this.toys[Math.floor(Math.random() * this.toys.length)];
 
+    if (this.currentToy.key == "heart") {
+      this.currentLife++;
+      console.log("vie collectée :" + this.heartpts)
+    }
+    if (this.currentToy.key == "lsdpill") {
+      console.log("aighhhht")
+      lsd = true
+      // this.currentLife++;
+      // console.log("vie collectée :" + this.heartpts)
+    }
     //make the toy visible where the mound used to be
     this.currentToy.visible = true;
     this.currentToy.x = x;
-
+    //refresh our points stats
+    this.points += 5;
+    this.refreshStats();
     //and make it disappear again after one second
     this.game.time.events.add(Phaser.Timer.SECOND, this.currentToyInvisible, this);
 
@@ -276,7 +300,7 @@ InfiniteScroller.Game.prototype = {
   playerScratch: function () {
     this.stopped = false;
 
-    if (this.scratches >= 5) {
+    if (this.fleasText.text <= "0") {
       //set to dead (even though our player isn't actually dead in this game, just running home)
       //doesn't affect rendering
       this.player.alive = false;
@@ -309,10 +333,7 @@ InfiniteScroller.Game.prototype = {
   },
   generateMounds: function () {
     this.mounds = this.game.add.group();
-
-    //enable physics in them
     this.mounds.enableBody = true;
-
     //phaser's random number generator
     var numMounds = this.game.rnd.integerInRange(0, 5)
     var mound;
@@ -321,7 +342,7 @@ InfiniteScroller.Game.prototype = {
       //add sprite within an area excluding the beginning and ending
       //  of the game world so items won't suddenly appear or disappear when wrapping
       var x = this.game.rnd.integerInRange(this.game.width, this.game.world.width - this.game.width);
-      mound = this.mounds.create(x, this.game.height - 75, 'mound');
+      mound = this.mounds.create(x, this.game.height - 108, 'mound');
       mound.body.velocity.x = 0;
     }
 
@@ -334,7 +355,6 @@ InfiniteScroller.Game.prototype = {
 
     //phaser's random number generator
     var numFleas = this.game.rnd.integerInRange(1, 6)
-    var flea;
     var tab = ['pills', 'boobs', 'seringue', 'wine', "canabi", "console"]
 
     for (var i = 0; i < numFleas; i++) {

@@ -1,23 +1,37 @@
 var InfiniteScroller = InfiniteScroller || {};
+var ville;
 
 InfiniteScroller.Game = function () { };
+var lsd = false;
+var lsdbackground;
+var girl = true
+var alien = false;
+
 
 InfiniteScroller.Game.prototype = {
   preload: function () {
     this.game.time.advancedTiming = true;
-    var lsd = false;
-    if (lsd) {
-      this.game.stage.backgroundColor = '#E18D8D';
-    }
+
   },
   create: function () {
+    ville = InfiniteScroller.game.add.tileSprite(0, 0, 3495, 600, 'background');
+
+    var lsdimage = this.game.cache.getImage('lsdback');
+
+
 
     //set up background and ground layer
     this.game.world.setBounds(0, 0, 3500, this.game.height);
     this.ground = this.add.tileSprite(0, this.game.height - 70, this.game.world.width, 70, 'ground');
 
     //create player and walk animation
-    this.player = this.game.add.sprite(this.game.width / 2, this.game.height - 90, 'dog');
+    if (girl) {
+      this.player = this.game.add.sprite(this.game.width / 2, this.game.height - 90, 'girl');
+    }
+    if (alien) {
+      this.player = this.game.add.sprite(this.game.width / 2, this.game.height - 90, 'alien');
+    }
+
     this.player.animations.add('walk');
 
     //create the fleas
@@ -36,6 +50,7 @@ InfiniteScroller.Game.prototype = {
     this.game.physics.arcade.enable(this.ground);
 
     //player gravity
+
     this.player.body.gravity.y = 1000;
 
     //so player can walk on ground
@@ -71,34 +86,48 @@ InfiniteScroller.Game.prototype = {
     this.whineSound = this.game.add.audio('whine');
 
     //set some variables we need throughout the game
-    this.scratches = 0;
+
+    this.hit = 0;
     this.wraps = 0;
     this.points = 0;
+    this.heartpts;
     this.wrapping = true;
     this.stopped = false;
-    this.maxScratches = 5;
+    this.currentLife = 5
 
     //create an array of possible toys that can be gathered from toy mounds
-    var bone = this.game.add.sprite(0, this.game.height - 130, 'bone');
-    var ball = this.game.add.sprite(0, this.game.height - 130, 'ball');
-    bone.visible = false;
-    ball.visible = false;
-    this.toys = [bone, ball];
-    this.currentToy = bone;
+    var heart = this.game.add.sprite(0, this.game.height - 130, 'heart');
+    var kit = this.game.add.sprite(0, this.game.height - 130, 'kit');
+    var lsdpill = this.game.add.sprite(-100, this.game.height - 130, 'lsdpill')
+    heart.visible = false;
+    kit.visible = false;
+    // this.toys = [heart, kit, lsdpill];
+    this.toys = [heart, kit];
+
+
 
     //stats
-    var style1 = { font: "20px Arial", fill: "#ff0" };
+    var style1 = { font: "20px Arial" };
     var t1 = this.game.add.text(10, 20, "Points:", style1);
-    var t2 = this.game.add.text(this.game.width - 300, 20, "Remaining Flea Scratches:", style1);
+    var t2 = this.game.add.text(this.game.width - 180, 20, "Vie restante:", style1);
     t1.fixedToCamera = true;
     t2.fixedToCamera = true;
 
-    var style2 = { font: "26px Arial", fill: "#00ff00" };
-    this.pointsText = this.game.add.text(80, 18, "", style2);
-    this.fleasText = this.game.add.text(this.game.width - 50, 18, "", style2);
-    this.refreshStats();
+    var style2 = { font: "26px Arial" };
+    this.pointsText = this.game.add.text(80, 18);
+    this.fleasText = this.game.add.text(this.game.width - 50, 18);
+
     this.pointsText.fixedToCamera = true;
     this.fleasText.fixedToCamera = true;
+
+    this.refreshStats();
+
+    lsdbackground = this.add.sprite(0, 0, "lsdback");
+    lsdbackground.alpha = 0.6
+    lsdbackground.scale.setTo(0.8)
+    lsdbackground.anchor.setTo(0.5)
+    lsdbackground.fixedToCamera = true
+    lsdbackground.kill()
 
   },
 
@@ -107,6 +136,13 @@ InfiniteScroller.Game.prototype = {
     this.game.physics.arcade.collide(this.player, this.ground, this.playerHit, null, this);
     this.game.physics.arcade.collide(this.player, this.fleas, this.playerBit, null, this);
     this.game.physics.arcade.overlap(this.player, this.mounds, this.collect, this.checkDig, this);
+
+    ville.tilePosition.x -= 0;
+
+
+    if (lsd) {
+      lsdbackground.revive();
+    }
 
     //only respond to keys and keep the speed if the player is alive
     //we also don't want to do anything if the player is stopped for scratching or digging
@@ -141,8 +177,9 @@ InfiniteScroller.Game.prototype = {
       // if (this.swipe.isDown && (this.swipe.positionDown.y > this.swipe.position.y)) {
       //   this.playerJump();
       // }
-      /*else*/ if (this.cursors.up.isDown) {
 
+      /*else*/
+      if (this.cursors.up.isDown) {
         this.playerJump();
       }
 
@@ -156,7 +193,17 @@ InfiniteScroller.Game.prototype = {
   //show updated stats values
   refreshStats: function () {
     this.pointsText.text = this.points;
-    this.fleasText.text = this.maxScratches - this.scratches;
+
+    this.fleasText.text = this.currentLife
+
+    if (this.heartpts == 1 && this.fleasText.text == this.currentLife) {
+      this.fleasText.text = this.fleasText.text - this.hit + this.heartpts;
+    }
+    if (this.heartpts < 1) {
+      this.fleasText.text = this.fleasText.text - this.hit;
+    }
+    this.heartpts = 0;
+    // this.heartpts = 0;
   },
   playerHit: function (player, blockedLayer) {
     if (player.body.touching.right) {
@@ -169,7 +216,7 @@ InfiniteScroller.Game.prototype = {
     flea.destroy();
 
     //update our stats
-    this.scratches++;
+    this.hit++;
     this.refreshStats();
 
     //change sprite image
@@ -217,59 +264,53 @@ InfiniteScroller.Game.prototype = {
   },
   playerJump: function () {
     var onTheGround = this.player.body.touching.down;
-
     if (onTheGround) {
       this.jumps = 2;
       this.jumping = false;
     }
-
     if (this.jumps > 0) {
       this.player.body.velocity.y -= 300;
       this.jumping = true;
     }
-
     if (this.jumping) {
       // this.player.body.velocity.y -= 300;
       this.jumps--;
       this.jumping = false;
     }
-    // var saut = true
-    // //when the ground is a sprite, we need to test for "touching" instead of "blocked"
-    // if (this.player.body.touching.down && saut == true) {
-    //   this.player.body.velocity.y -= 500;
-    //   saut = false;
-    // }
-    // if (!this.player.body.touching.down && saut == false) {
-    //   this.player.body.velocity.y -= 500;
-    //   saut = true;
-    // }
   },
   playerDig: function () {
-    //play audio
-    this.barkSound.play();
-
     //grab the location before we destroy the toy mound so we can place the toy
     var x = this.currentMound.x;
-
     //remove toy the mound sprite now that the toy is collected
     this.currentMound.destroy();
-
-    //refresh our points stats
-    this.points += 5;
-    this.refreshStats();
-
     //randomly pull a toy from the array
     this.currentToy = this.toys[Math.floor(Math.random() * this.toys.length)];
+
+    if (this.currentToy.key == "heart") {
+      this.currentLife++;
+      console.log("vie collectée :" + this.heartpts)
+    }
+    if (this.currentToy.key == "kit") {
+      console.log("kit")
+      lsdbackground.kill()
+
+
+    }
+    if (this.currentToy.key == "lsdpill") {
+      lsd = true
+    }
 
     //make the toy visible where the mound used to be
     this.currentToy.visible = true;
     this.currentToy.x = x;
-
+    this.points += 5;
+    this.refreshStats();
     //and make it disappear again after one second
     this.game.time.events.add(Phaser.Timer.SECOND, this.currentToyInvisible, this);
 
     //We switch back to the standing version of the player
-    this.player.loadTexture('dog');
+
+    this.player.loadTexture('girl');
     this.player.animations.play('walk', 3, true);
     this.player.body.setSize(this.player.standDimensions.width, this.player.standDimensions.height);
     this.stopped = false;
@@ -280,7 +321,8 @@ InfiniteScroller.Game.prototype = {
   playerScratch: function () {
     this.stopped = false;
 
-    if (this.scratches >= 5) {
+
+    if (this.fleasText.text <= "0") {
       //set to dead (even though our player isn't actually dead in this game, just running home)
       //doesn't affect rendering
       this.player.alive = false;
@@ -290,7 +332,8 @@ InfiniteScroller.Game.prototype = {
       this.mounds.destroy();
 
       //We switch back to the standing version of the player
-      this.player.loadTexture('dog');
+
+      this.player.loadTexture('girl');
       this.player.animations.play('walk', 10, true); //frame rate is faster for running
       this.player.body.setSize(this.player.standDimensions.width, this.player.standDimensions.height);
 
@@ -306,17 +349,16 @@ InfiniteScroller.Game.prototype = {
       this.game.time.events.add(1500, this.gameOver, this);
     } else {
       //change image and update the body size for the physics engine
-      this.player.loadTexture('dog');
-      this.player.animations.play('walk', 3, true);
+
+      this.player.loadTexture('girl');
+      this.player.animations.play('walk', 6, true);
       this.player.body.setSize(this.player.standDimensions.width, this.player.standDimensions.height);
     }
   },
   generateMounds: function () {
     this.mounds = this.game.add.group();
 
-    //enable physics in them
     this.mounds.enableBody = true;
-
     //phaser's random number generator
     var numMounds = this.game.rnd.integerInRange(0, 5)
     var mound;
@@ -325,7 +367,7 @@ InfiniteScroller.Game.prototype = {
       //add sprite within an area excluding the beginning and ending
       //  of the game world so items won't suddenly appear or disappear when wrapping
       var x = this.game.rnd.integerInRange(this.game.width, this.game.world.width - this.game.width);
-      mound = this.mounds.create(x, this.game.height - 75, 'mound');
+      mound = this.mounds.create(x, this.game.height - 108, 'mound');
       mound.body.velocity.x = 0;
     }
 
@@ -337,12 +379,11 @@ InfiniteScroller.Game.prototype = {
     this.fleas.enableBody = true;
 
     //phaser's random number generator
-    var numFleas = this.game.rnd.integerInRange(1, 3)
-    var flea;
-    var tab = ['flea', 'pills', 'boobs', 'seringue', 'wine']
+    var numFleas = this.game.rnd.integerInRange(1, 6)
+    var tab = ['pills', 'boobs', 'seringue', 'wine', "canabi", "console"]
 
     for (var i = 0; i < numFleas; i++) {
-      var baddie = Math.floor(Math.random() * 5)
+      var baddie = Math.floor(Math.random() * 6)
       console.log(baddie)
       //add sprite within an area excluding the beginning and ending
       //  of the game world so items won't suddenly appear or disappear when wrapping
@@ -358,16 +399,16 @@ InfiniteScroller.Game.prototype = {
   },
   render: function () {
     //this.game.debug.text(this.game.time.fps || '--', 20, 70, "#00ff00", "40px Courier");
-  },
-  upInputIsActive: function (duration) {
-    var isActive = false;
 
-    isActive = this.input.keyboard.downDuration(Phaser.Keyboard.UP, duration);
-    isActive |= (this.game.input.activePointer.justPressed(duration + 1000 / 60) &&
-      this.game.input.activePointer.x > this.game.width / 4 &&
-      this.game.input.activePointer.x < this.game.width / 2 + this.game.width / 4);
-
-    return isActive;
   }
+  // upInputIsActive: function (duration) {
+  //   var isActive = false;
 
+  //   isActive = this.input.keyboard.downDuration(Phaser.Keyboard.UP, duration);
+  //   isActive |= (this.game.input.activePointer.justPressed(duration + 1000 / 60) &&
+  //     this.game.input.activePointer.x > this.game.width / 4 &&
+  //     this.game.input.activePointer.x < this.game.width / 2 + this.game.width / 4);
+
+  //   return isActive;
+  // }
 };

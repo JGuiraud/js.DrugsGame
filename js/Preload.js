@@ -4,41 +4,49 @@ var InfiniteScroller = InfiniteScroller || {};
 InfiniteScroller.Preload = function () { };
 
 InfiniteScroller.Preload.prototype = {
-  preload: function () {
-    //show loading screen
-    this.preloadBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'preloadbar');
-    this.preloadBar.anchor.setTo(0.5);
-    this.preloadBar.scale.setTo(3);
+    preload: function () {
+        //show loading screen
+        this.preloadBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'preloadbar');
+        this.preloadBar.anchor.setTo(0.5);
+        this.preloadBar.scale.setTo(3);
 
-    this.load.setPreloadSprite(this.preloadBar);
+        this.load.setPreloadSprite(this.preloadBar);
 
-    //load game assets
-    this.load.spritesheet('dog', 'assets/images/dog_walk.png', 122, 92, 2);
-    this.load.spritesheet('playerScratch', 'assets/images/dog_scratch.png', 116, 100, 2);
-    this.load.spritesheet('playerDig', 'assets/images/dog_dig.png', 129, 100, 2);
-    this.load.spritesheet('lsdback', 'assets/images/lsdBackground.jpg')
-    this.load.image('ground', 'assets/images/ground.png');
-    // this.load.image('grass', 'assets/images/grass.png');
-    this.load.audio('whine', ['assets/audio/whine.ogg', 'assets/audio/whine.mp3']);
-    this.load.audio('bark', ['assets/audio/bark.ogg', 'assets/audio/bark.mp3']);
+        this.load.spritesheet('lsdback', 'assets/images/lsdBackground2.jpg')
+        //load game assets
+        this.load.spritesheet('girl', 'assets/images/girl.png', 82, 80, 6);
+        this.load.spritesheet('playerScratch', 'assets/images/pls3.png', 53, 61, 2);
+        this.load.spritesheet('playerDig', 'assets/images/open.png', 63, 80, 2);
 
-    //from http://www.gamedevacademy.org/html5-phaser-tutorial-spacehipster-a-space-exploration-game/
-    this.load.image('mound', 'assets/images/chest2.png');
 
-    //Adapted from https://openclipart.org/detail/6570/flea:
-    this.load.image('flea', 'assets/images/flea.png');
-    this.load.image('pills', 'assets/images/pill2.png');
-    this.load.image('boobs', 'assets/images/boob.png');
-    this.load.image('seringue', 'assets/images/seringue.png');
-    this.load.image('wine', 'assets/images/wine.png');
+        this.load.image('ground', 'assets/images/ground.png');
+        this.load.image('background', 'assets/images/bckg2.png');
 
-    //https://openclipart.org/detail/188266/bone:
-    this.load.image('bone', 'assets/images/toys/bone.png');
 
-    //https://openclipart.org/detail/139615/tennis-ball:
-    this.load.image('ball', 'assets/images/toys/tennisball.png');
-  },
-  create: function () {
-    this.state.start('Game');
-  }
+        // this.load.image('grass', 'assets/images/grass.png');
+        this.load.audio('whine', ['assets/audio/whine.ogg', 'assets/audio/whine.mp3']);
+        this.load.audio('bark', ['assets/audio/bark.ogg', 'assets/audio/bark.mp3']);
+
+        //from http://www.gamedevacademy.org/html5-phaser-tutorial-spacehipster-a-space-exploration-game/
+        this.load.image('mound', 'assets/images/chest2.png');
+
+        //Adapted from https://openclipart.org/detail/6570/flea:
+        this.load.image('pills', 'assets/images/pill2.png');
+        this.load.image('boobs', 'assets/images/boob.png');
+        this.load.image('seringue', 'assets/images/seringue.png');
+        this.load.image('wine', 'assets/images/wine.png');
+        this.load.image('console', 'assets/images/console.png');
+        this.load.image('canabi', 'assets/images/canabi.png');
+
+        //https://openclipart.org/detail/188266/bone:
+        this.load.image('heart', 'assets/images/toys/heart.png');
+
+        //https://openclipart.org/detail/139615/tennis-ball:
+        this.load.image('kit', 'assets/images/toys/medikit.jpg');
+        this.load.image('lsdpill', 'assets/images/toys/lsdface.png');
+
+    },
+    create: function () {
+        this.state.start('Game');
+    }
 };

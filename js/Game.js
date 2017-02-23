@@ -83,7 +83,9 @@ InfiniteScroller.Game.prototype = {
 
     //sounds
     //this.barkSound = this.game.add.audio('bark');
-    this.whineSound = this.game.add.audio('whine');
+    this.whineSound = this.game.add.audio('music');
+    this.whineSound.play();
+
 
     //set some variables we need throughout the game
 
@@ -224,8 +226,7 @@ InfiniteScroller.Game.prototype = {
     this.player.animations.play('scratch', 10, true);
 
     //play audio
-    this.whineSound.play();
-
+    
     //wait a couple of seconds for the scratch animation to play before continuing
     this.stopped = true;
     this.player.body.velocity.x = 0;

@@ -82,7 +82,7 @@ InfiniteScroller.Game.prototype = {
     this.swipe = this.game.input.activePointer;
 
     //sounds
-    this.barkSound = this.game.add.audio('bark');
+    //this.barkSound = this.game.add.audio('bark');
     this.whineSound = this.game.add.audio('whine');
 
     //set some variables we need throughout the game

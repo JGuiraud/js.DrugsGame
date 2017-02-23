@@ -24,8 +24,8 @@ InfiniteScroller.Preload.prototype = {
 
 
         // this.load.image('grass', 'assets/images/grass.png');
-        this.load.audio('whine', ['assets/audio/whine.ogg', 'assets/audio/whine.mp3']);
-        this.load.audio('bark', ['assets/audio/bark.ogg', 'assets/audio/bark.mp3']);
+        this.load.audio('whine', ['assets/audio/whine.ogg', 'assets/audio/music_snoop.mp3']);
+        //this.load.audio('bark', ['assets/audio/bark.ogg', 'assets/audio/bark.mp3']);
 
         //from http://www.gamedevacademy.org/html5-phaser-tutorial-spacehipster-a-space-exploration-game/
         this.load.image('mound', 'assets/images/chest2.png');

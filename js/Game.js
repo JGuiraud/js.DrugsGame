@@ -3,6 +3,10 @@ var ville;
 
 InfiniteScroller.Game = function () { };
 var lsd = false;
+var lsdbackground;
+var girl = true
+var alien = false;
+
 
 
 InfiniteScroller.Game.prototype = {
@@ -16,12 +20,19 @@ InfiniteScroller.Game.prototype = {
     var lsdimage = this.game.cache.getImage('lsdback');
 
 
+
     //set up background and ground layer
     this.game.world.setBounds(0, 0, 3500, this.game.height);
     this.ground = this.add.tileSprite(0, this.game.height - 70, this.game.world.width, 70, 'ground');
 
     //create player and walk animation
-    this.player = this.game.add.sprite(this.game.width / 2, this.game.height - 90, 'girl');
+    if (girl) {
+      this.player = this.game.add.sprite(this.game.width / 2, this.game.height - 90, 'girl');
+    }
+    if (alien) {
+      this.player = this.game.add.sprite(this.game.width / 2, this.game.height - 90, 'alien');
+    }
+
     this.player.animations.add('walk');
 
     //create the fleas
@@ -39,7 +50,6 @@ InfiniteScroller.Game.prototype = {
     this.game.physics.arcade.enable(this.player);
     this.game.physics.arcade.enable(this.ground);
 
-    //player gravity
     this.player.body.gravity.y = 1000;
 
     //so player can walk on ground
@@ -86,11 +96,13 @@ InfiniteScroller.Game.prototype = {
     //create an array of possible toys that can be gathered from toy mounds
     var heart = this.game.add.sprite(0, this.game.height - 130, 'heart');
     var kit = this.game.add.sprite(0, this.game.height - 130, 'kit');
-    var lsdpill = this.game.add.image(0, this.game.height - 130, 'lsdpill')
-    lsdpill.alpha = 0.2;
+    var lsdpill = this.game.add.sprite(-100, this.game.height - 130, 'lsdpill')
     heart.visible = false;
     kit.visible = false;
-    this.toys = [heart, kit, lsdpill];
+    // this.toys = [heart, kit, lsdpill];
+    this.toys = [heart, kit];
+
+
 
     //stats
     var style1 = { font: "20px Arial" };
@@ -107,6 +119,14 @@ InfiniteScroller.Game.prototype = {
     this.fleasText.fixedToCamera = true;
 
     this.refreshStats();
+
+    lsdbackground = this.add.sprite(0, 0, "lsdback");
+    lsdbackground.alpha = 0.6
+    lsdbackground.scale.setTo(0.8)
+    lsdbackground.anchor.setTo(0.5)
+    lsdbackground.fixedToCamera = true
+    lsdbackground.kill()
+
   },
 
   update: function () {
@@ -118,8 +138,7 @@ InfiniteScroller.Game.prototype = {
 
 
     if (lsd) {
-      this.add.sprite(0, 0, "lsdback");
-      // lsdpill.alpha = 0.2;
+      lsdbackground.revive();
     }
 
     //only respond to keys and keep the speed if the player is alive
@@ -240,33 +259,19 @@ InfiniteScroller.Game.prototype = {
   },
   playerJump: function () {
     var onTheGround = this.player.body.touching.down;
-
     if (onTheGround) {
       this.jumps = 2;
       this.jumping = false;
     }
-
     if (this.jumps > 0) {
       this.player.body.velocity.y -= 300;
       this.jumping = true;
     }
-
     if (this.jumping) {
       // this.player.body.velocity.y -= 300;
       this.jumps--;
       this.jumping = false;
     }
-
-    // var saut = true
-    // //when the ground is a sprite, we need to test for "touching" instead of "blocked"
-    // if (this.player.body.touching.down && saut == true) {
-    //   this.player.body.velocity.y -= 500;
-    //   saut = false;
-    // }
-    // if (!this.player.body.touching.down && saut == false) {
-    //   this.player.body.velocity.y -= 500;
-    //   saut = true;
-    // }
   },
   playerDig: function () {
     //grab the location before we destroy the toy mound so we can place the toy
@@ -280,20 +285,19 @@ InfiniteScroller.Game.prototype = {
       this.currentLife++;
       console.log("vie collectée :" + this.heartpts)
     }
+    if (this.currentToy.key == "kit") {
+      console.log("kit")
+      lsdbackground.kill()
 
 
-
-    // if (this.currentToy.key == "lsdpill") {
-    //   console.log("aighhhht")
-    //   lsd = true
-    // }
-
-
+    }
+    if (this.currentToy.key == "lsdpill") {
+      lsd = true
+    }
 
     //make the toy visible where the mound used to be
     this.currentToy.visible = true;
     this.currentToy.x = x;
-    //refresh our points stats
     this.points += 5;
     this.refreshStats();
     //and make it disappear again after one second

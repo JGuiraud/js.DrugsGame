@@ -45,6 +45,9 @@ InfiniteScroller.Preload.prototype = {
         //https://openclipart.org/detail/139615/tennis-ball:
         this.load.image('kit', 'assets/images/toys/medikit.jpg');
         this.load.image('lsdpill', 'assets/images/toys/lsdface.png');
+        //presentation jeu
+        this.load.image('img', 'assets/images/start sans mckay.png');
+        this.load.image('button', 'assets/images/mckay.png');
 
     },
     create: function () {

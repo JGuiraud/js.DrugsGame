@@ -7,7 +7,6 @@ var lsdbackground;
 var girl = true
 var alien = false;
 
-
 InfiniteScroller.Game.prototype = {
   preload: function () {
     this.game.time.advancedTiming = true;
@@ -82,10 +81,9 @@ InfiniteScroller.Game.prototype = {
     this.swipe = this.game.input.activePointer;
 
     //sounds
-    //this.barkSound = this.game.add.audio('bark');
     this.whineSound = this.game.add.audio('music');
+    this.whineSound.loop = true;
     this.whineSound.play();
-
 
     //set some variables we need throughout the game
 
@@ -95,7 +93,7 @@ InfiniteScroller.Game.prototype = {
     this.heartpts;
     this.wrapping = true;
     this.stopped = false;
-    this.currentLife = 5
+    this.currentLife = 1
 
     //create an array of possible toys that can be gathered from toy mounds
     var heart = this.game.add.sprite(0, this.game.height - 130, 'heart');
@@ -134,6 +132,8 @@ InfiniteScroller.Game.prototype = {
   },
 
   update: function () {
+        // this.whineSound.(0.9);
+
     //collision
     this.game.physics.arcade.collide(this.player, this.ground, this.playerHit, null, this);
     this.game.physics.arcade.collide(this.player, this.fleas, this.playerBit, null, this);
@@ -252,7 +252,7 @@ InfiniteScroller.Game.prototype = {
     }
   },
   gameOver: function () {
-    this.game.state.start('Game');
+    this.game.state.start('GameStart');
   },
   //checks to see that the player is swiping down or pressing a down arrow while on a toy mound
   checkDig: function () {

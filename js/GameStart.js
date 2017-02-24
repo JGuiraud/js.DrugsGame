@@ -5,12 +5,23 @@ InfiniteScroller.GameStart = function () { };
 var background2;
 var button;
 
-function create (){
-	background2 =  game.stage.backgroundColor(0, 0, 3495, 600, 'img');
-	button = game.add.button(game.world.centerX - 95, 400, 'button', actionOnClick, this, 2, 1, 0);
+InfiniteScroller.GameStart.prototype = {
+	create: function(){
+		// background2 =  this.GameStart.stage.backgroundColor(0, 0, 3495, 600, 'img');
+		background2 = this.add.sprite(0, 0, "img");
+		background2.scale.setTo(0.95)
 
-};
-function onclick(){
+		//button = this.GameStart.add.button(game.world.centerX - 95, 400, 'button', actionOnClick, this, 2, 1, 0);
+		button = this.game.add.button(373, 210, 'button', function() {
+			this.state.start('Game');
+		}, this);
+		button.anchor.setTo(0.4)
+	},
+	update: function(){
+
+	}
+
+
 
 };
 

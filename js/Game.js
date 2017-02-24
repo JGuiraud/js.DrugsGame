@@ -93,7 +93,7 @@ InfiniteScroller.Game.prototype = {
     this.heartpts;
     this.wrapping = true;
     this.stopped = false;
-    this.currentLife = 1
+    this.currentLife = 5;
 
     //create an array of possible toys that can be gathered from toy mounds
     var heart = this.game.add.sprite(0, this.game.height - 130, 'heart');

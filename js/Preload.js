@@ -16,7 +16,7 @@ InfiniteScroller.Preload.prototype = {
         //load game assets
         this.load.spritesheet('girl', 'assets/images/girl.png', 82, 80, 6);
         this.load.spritesheet('playerScratch', 'assets/images/pls3.png', 53, 61, 2);
-        this.load.spritesheet('playerDig', 'assets/images/open.png', 63, 80, 2);
+        this.load.spritesheet('playerDig', 'assets/images/open.png', 72, 80, 2);
 
 
         this.load.image('ground', 'assets/images/ground.png');
